@@ -1,7 +1,7 @@
 # Decoy package management
 import time
+import json
 
-import requests
 from app.client.engsel import get_package_details
 from app.service.auth import AuthInstance
 
@@ -9,7 +9,7 @@ class DecoyPackage:
     _instance_ = None
     _initialized_ = False
     
-    decoy_base_url = "https://me.mashu.lol/pg-decoy-"
+    decoy_base_path = "decoy_data/pg-decoy-"
     subscriber_id = None
     subscription_type = None
     
@@ -89,16 +89,16 @@ class DecoyPackage:
         api_key = AuthInstance.api_key
         tokens = active_user["tokens"]
         
-        url = self.decoy_base_url + decoy_name + ".json"
+        path = self.decoy_base_path + decoy_name + ".json"
 
         try:
             print(f"Refreshing decoy data for: {decoy_name}")
-            response = requests.get(url, timeout=30)
-            if response.status_code != 200:
-                print("Gagal mengambil data decoy package.")
-                return None
             
-            decoy_data = response.json()
+            decoy = {}
+            with open(path, "r", encoding="utf-8") as f:
+                decoy = json.load(f)
+            
+            decoy_data = decoy
             decoy_package_detail = get_package_details(
                 api_key,
                 tokens,
