@@ -101,17 +101,49 @@ def show_account_menu():
         print("-" * 55)
         print("Command:")
         print("0: Tambah Akun")
+        print("e <nomor> : Edit nama akun")
         print("Masukan nomor urut akun untuk berganti.")
         print("Masukan del <nomor urut> untuk menghapus akun tertentu.")
         print("00: Kembali ke menu utama")
         print("-" * 55)
-        input_str = input("Pilihan:")
+        input_str = input("Pilihan: ")
+
         if input_str == "00":
             in_account_menu = False
             return active_user["number"] if active_user else None
         elif input_str == "0":
             add_user = True
             continue
+        elif input_str.startswith("e "):
+            parts = input_str.split()
+            if len(parts) == 2 and parts[1].isdigit():
+                idx = int(parts[1])
+
+            if 1 <= idx <= len(users):
+                user = users[idx - 1]
+                old_name = user.get("name", "Tanpa Nama")
+
+                print(f"Nama lama : {old_name}")
+                new_name = input("Nama baru : ").strip()
+
+                if new_name:
+                    user["name"] = new_name
+
+                    # Simpan perubahan ke file
+                    if hasattr(AuthInstance, "write_tokens_to_file"):
+                        AuthInstance.write_tokens_to_file()
+
+                    print("✅ Nama berhasil diperbarui.")
+                else:
+                    print("❌ Nama tidak boleh kosong.")
+            else:
+                print("❌ Nomor tidak valid.")
+        else:
+            print("❌ Format salah. Contoh: e 1")
+
+        pause()
+        continue
+
         elif input_str.isdigit() and 1 <= int(input_str) <= len(users):
             selected_user = users[int(input_str) - 1]
             return selected_user['number']
