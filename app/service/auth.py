@@ -72,30 +72,33 @@ class Auth:
                 else:
                     print(f"Invalid token entry: {rt}")
 
-    def add_refresh_token(self, number: int, refresh_token: str):
-        # Check if number already exist, if yes, replace it, if not append
-        existing = next((rt for rt in self.refresh_tokens if rt["number"] == number), None)
-        if existing:
-            existing["refresh_token"] = refresh_token
-        else:
-            tokens = get_new_token(self.api_key, refresh_token, "")
-            profile_data = get_profile(self.api_key, tokens["access_token"], tokens["id_token"])
-            sub_id = profile_data["profile"]["subscriber_id"]
-            sub_type = profile_data["profile"]["subscription_type"]
+    def add_refresh_token(self, number: int, refresh_token: str, name: str | None = None):
+    	# Check if number already exist, if yes, replace it, if not append
+    	existing = next((rt for rt in self.refresh_tokens if rt["number"] == number), None)
+    	if existing:
+        	existing["refresh_token"] = refresh_token
+        if name is not None:
+            existing["name"] = name
+    	else:
+        	tokens = get_new_token(self.api_key, refresh_token, "")
+        	profile_data = get_profile(self.api_key, tokens["access_token"], tokens["id_token"])
+        	sub_id = profile_data["profile"]["subscriber_id"]
+        	sub_type = profile_data["profile"]["subscription_type"]
 
-            self.refresh_tokens.append({
-                "number": int(number),
-                "subscriber_id": sub_id,
-                "subscription_type": sub_type,
-                "refresh_token": refresh_token
-            })
+        	self.refresh_tokens.append({
+            	"number": int(number),
+            	"name": name or "Tanpa Nama",
+            	"subscriber_id": sub_id,
+            	"subscription_type": sub_type,
+            	"refresh_token": refresh_token
+        	})
+
+    	# Save to file
+    	self.write_tokens_to_file()
+
+    	# Set active user to newly added
+    	self.set_active_user(number)
         
-        # Save to file
-        self.write_tokens_to_file()
-
-        # Set active user to newly added
-        self.set_active_user(number)
-            
     def remove_refresh_token(self, number: int):
         self.refresh_tokens = [rt for rt in self.refresh_tokens if rt["number"] != number]
         
