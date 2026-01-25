@@ -45,7 +45,10 @@ def login_prompt(api_key: str):
                 continue
             
             print("Berhasil login!")
-            return phone_number, tokens["refresh_token"]
+            account_name = input("Masukkan nama akun (contoh: Pribadi / Kantor): ").strip()
+            if not account_name:
+                account_name = "Tanpa Nama"
+            return phone_number, tokens["refresh_token"], account_name
 
         print("Gagal login setelah beberapa percobaan. Silahkan coba lagi nanti.")
         return None, None
@@ -65,13 +68,13 @@ def show_account_menu():
         clear_screen()
         print("-------------------------------------------------------")
         if AuthInstance.get_active_user() is None or add_user:
-            number, refresh_token = login_prompt(AuthInstance.api_key)
+            number, refresh_token, account_name = login_prompt(AuthInstance.api_key)
             if not refresh_token:
                 print("Gagal menambah akun. Silahkan coba lagi.")
                 pause()
                 continue
             
-            AuthInstance.add_refresh_token(int(number), refresh_token)
+            AuthInstance.add_refresh_token(int(number), refresh_token, name=account_name)
             AuthInstance.load_tokens()
             users = AuthInstance.refresh_tokens
             active_user = AuthInstance.get_active_user()
