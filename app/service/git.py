@@ -2,7 +2,7 @@ import subprocess
 import requests
 import xml.etree.ElementTree as ET
 
-OWNER = "purplemashu"
+OWNER = "harunkl"
 REPO  = "me-cli-sunset"
 BRANCH = "main"
 
