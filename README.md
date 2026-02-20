@@ -20,11 +20,11 @@ pkg install git -y
 ```
 3. Clone this repo
 ```
-git clone https://github.com/harunkl/me-cli-sunset
+git clone https://github.com/harunkl/sunset
 ```
 4. Open the folder
 ```
-cd me-cli-sunset
+cd sunset
 ```
 5. Setup
 ```
